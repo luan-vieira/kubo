@@ -3,18 +3,21 @@
 require "tty-prompt"
 require "kubeclient"
 
+require_relative "command"
+
 module Kubo
   class Cli
-    def initialize(argv)
-      @argv = argv
+    def initialize
+      @command = Command.new
       @prompt = TTY::Prompt.new
-      @config = Kubeclient::Config.read(ENV["KUBECONFIG"] || "/Users/lvieira/.kube/config")
-      @context = config.context(context_name)
+      @context = config.context
     end
 
     def run
-      namespaces = client.get_namespaces
-      prompt.select("Which namespace are you interested in?", namespaces, filter: true)
+      @command.parse
+      @command.run
+      namespaces = client.get_namespaces.map { |ns| ns.metadata.name }
+      @prompt.select("Which namespace are you interested in?", namespaces, filter: true)
     end
 
     private
@@ -26,6 +29,10 @@ module Kubo
         ssl_options: @context.ssl_options,
         auth_options: @context.auth_options
       )
+    end
+
+    def config
+      @config ||= Kubeclient::Config.read(ENV["KUBECONFIG"] || "/Users/lvieira/.kube/config")
     end
   end
 end
