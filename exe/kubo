@@ -6,4 +6,5 @@ $LOAD_PATH.unshift(
 
 require "kubo"
 
+puts "Hi there!"
 Kubo::Cli.new(ARGV).run
