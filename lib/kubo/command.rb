@@ -14,10 +14,24 @@ module Kubo
       desc "Interact with pods for a given namespace"
     end
 
-    keyword :ns do
+    #     keyword :ns do
+    #       required
+    #       arity one_or_more
+    #       desc "The name of the namespace to use"
+    #     end
+
+    option :namespace do
       required
       arity one_or_more
+      short "-n"
+      long "--namespace string"
       desc "The name of the namespace to use"
+    end
+
+    option :label do
+      short "-l"
+      long "--label string"
+      desc "Any labels to use for filtering"
     end
 
     flag :help do
