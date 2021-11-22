@@ -24,7 +24,7 @@ module Kubo
       if pods.empty?
         puts "There are no matching pods"
       else
-        pod_choice = @prompt.select("Which pods are you interested in?", pods, filter: true, per_page: 10)
+        pod_choice = @prompt.select("Which pods are you interested in?", pods, filter: true, per_page: 100)
         action = @prompt.expand("Which action would you like to take?") do |q|
           q.choice key: "d", name: "Delete", value: :delete
           q.choice key: "b", name: "Describe", value: :describe
@@ -41,11 +41,13 @@ module Kubo
     def execute(action, pod)
       case action
       when :delete
-        puts "Deleting pod #{pod}"
+        client.delete_pod(pod.name, pod.namespace)
+        puts "#{pod.name} successfully deleted"
       when :describe
         puts "Describing pod #{pod}"
+        table = Resources::Pod.to_table(Array(pod))
+        table.render(multiline: true, resize: true)
       when :logs
-        puts "Showing logs from pod #{pod.name}"
         container = @prompt.select("Select the container to display logs", pod.containers.map(&:name))
         puts client.get_pod_log(pod.name, pod.namespace, container: container)
       when :containers

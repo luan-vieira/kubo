@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "tty-option"
   spec.add_dependency "tty-prompt"
+  spec.add_dependency "tty-table"
   spec.add_dependency "kubeclient"
   spec.add_dependency "openid_connect" # Used for OIDC auth. It would be nice to only conditionally include it
 
